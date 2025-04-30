@@ -1,0 +1,104 @@
+/* ========== THEME TOKENS ========= */
+:root{
+  --bg:#fafafa;           /* page background */
+  --card:#ffffff;         /* post card */
+  --border:#e4e4e4;
+  --text:#1d1d1d;
+  --muted:#777;
+  --accent:#111;
+  --shadow:0 16px 40px rgba(0,0,0,.08);
+}
+@media (prefers-color-scheme: dark){
+ :root{
+  --bg:#121212;--card:#1e1e1e;--border:#2d2d2d;
+  --text:#ececec;--muted:#999;--accent:#fff;
+  --shadow:0 16px 40px rgba(0,0,0,.4);
+ }
+}
+
+/* ========== RESET ========= */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+
+/* ========== HERO ========= */
+.hero{
+  height:100vh;
+  background:url('images/hero-placeholder.jpg') center/cover fixed;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.hero::before{ /* dark overlay */
+  content:'';position:absolute;inset:0;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(2px);
+}
+@keyframes ken {from{transform:scale(1)}to{transform:scale(1.1)}}
+.hero{animation:ken 20s ease-in-out infinite alternate;}
+.hero__inner{position:relative;text-align:center;color:#fff;padding:0 16px;}
+.logo-big{font-family:'Billabong',cursive;font-size:80px;letter-spacing:.5px;line-height:1;margin-bottom:.3em;}
+.tagline{font-size:20px;font-weight:300;opacity:.9;margin-bottom:1.2em;}
+.scroll-btn{font-size:24px;text-decoration:none;color:#fff;animation:blink 2s infinite;}
+@keyframes blink{50%{opacity:.3}}
+
+/* ========== TOP NAV ========= */
+.ig-top{
+  position:fixed;top:0;left:0;right:0;height:58px;
+  background:rgba(255,255,255,.65);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+  transform:translateY(-110%);transition:.45s cubic-bezier(.4,.0,.2,1);z-index:999;
+}
+.ig-top.show{transform:none;}
+.logo-small{font-family:'Billabong',cursive;font-size:30px;}
+.ig-top .material-icons{position:absolute;right:20px;font-size:28px;color:var(--accent);cursor:pointer}
+
+/* ========== BOTTOM NAV ========= */
+.ig-bottom{
+  position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--card);
+  border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;z-index:999;
+}
+.ig-bottom .material-icons{font-size:30px;color:var(--accent);}
+
+/* ========== FEED GRID ========= */
+.feed{
+  max-width:1100px;margin:80vh auto 90px;   /* start after hero */
+  display:grid;gap:40px;
+  grid-template-columns:repeat(auto-fit,minmax(310px,1fr));
+  padding:0 20px;
+}
+@media(max-width:700px){
+  .feed{margin:calc(100vh - 60px) 0 90px;grid-template-columns:1fr;padding:0 0 32px;}
+}
+
+/* ========== POST CARD ========= */
+.post{
+  background:var(--card);border-radius:16px;border:1px solid var(--border);
+  box-shadow:var(--shadow);overflow:hidden;
+  opacity:0;transform:translateY(70px);transition:.8s cubic-bezier(.35,.46,.45,1);
+}
+.post.show{opacity:1;transform:none}
+@media(hover:hover){
+  .post:hover{transform:translateY(-4px) scale(1.015);box-shadow:0 20px 40px rgba(0,0,0,.12);}
+}
+
+/* header */
+.post__head{display:flex;align-items:center;padding:18px 22px;}
+.avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;margin-right:14px;}
+.name{font-weight:600;font-size:16px;flex:1;}
+.more{color:var(--muted);cursor:pointer}
+.post__img{width:100%;display:block}
+
+/* actions */
+.post__actions{display:flex;align-items:center;padding:12px 18px;}
+.post__actions .material-icons{font-size:28px;margin-right:20px;color:var(--accent);cursor:pointer;transition:.2s}
+.post__actions .material-icons:hover{transform:scale(1.15)}
+.post__actions .save{margin-left:auto}
+
+/* text blocks */
+.likes{padding:0 18px 4px;font-weight:600;font-size:15px;}
+.caption{padding:4px 18px 12px;font-size:15px;line-height:1.6;}
+.caption h3{margin:14px 0 6px;font-size:18px;font-weight:600;}
+.caption ul{padding-left:1.2em;margin:6px 0 10px;}
+.caption li{margin-bottom:4px;}
+.time{padding:0 18px 16px;font-size:12px;color:var(--muted);}
+
+/* fade-in anim */
+@keyframes rise{to{opacity:1;transform:none}}

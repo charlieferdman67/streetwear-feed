@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StreetwearPulse</title>
+
+<!-- Type & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Billabong&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="hero__inner">
+    <h1 class="logo-big">StreetwearPulse</h1>
+    <p class="tagline">From feeds to sidewalks · 15 cities · 3 simple metrics</p>
+    <a href="#feed" class="scroll-btn">▼ Scroll to explore</a>
+  </div>
+</section>
+
+<!-- Frosted top-nav (reveals on scroll) -->
+<header class="ig-top" id="topBar">
+  <span class="logo-small">StreetwearPulse</span>
+  <span class="material-icons">send</span>
+</header>
+
+<!-- Feed root -->
+<main id="feed"></main>
+
+<!-- Bottom nav -->
+<footer class="ig-bottom">
+  <span class="material-icons">home</span>
+  <span class="material-icons">search</span>
+  <span class="material-icons">add_box</span>
+  <span class="material-icons">favorite_border</span>
+  <span class="material-icons">account_circle</span>
+</footer>
+
+<!-- Libs -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<!-- Main JSX -->
+<script type="text/babel">
+/* ---------------- helpers ---------------- */
+const topBar = document.getElementById('topBar');
+window.addEventListener('scroll', () =>
+  topBar.classList.toggle('show', window.scrollY > window.innerHeight * .65)
+);
+
+/* fade-in */
+const io = new IntersectionObserver(
+  e => e.forEach(el => el.isIntersecting && el.target.classList.add('show')),
+  { threshold:.15 }
+);
+
+/* ---------- Post with expandable caption ---------- */
+function Post({ id, img, raw, likes, hours }) {
+  /* fade-in observer (unchanged) */
+  React.useEffect(() => {
+    const el = document.getElementById(id);
+    if (el) io.observe(el);
+  }, []);
+
+  /* toggle state */
+  const [open, setOpen] = React.useState(false);
+
+  /* markdown → HTML only once */
+  const fullHTML = React.useMemo(() => marked.parse(raw), [raw]);
+
+  /* preview: strip MD syntax, slice first 160 chars */
+  const preview = React.useMemo(() => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = fullHTML;                       // plain HTML now
+    const text = tmp.textContent || tmp.innerText || '';
+    return text.length > 160 ? text.slice(0, 160).trim() + '…' : text;
+  }, [fullHTML]);
+
+  return (
+    <article id={id} className="post">
+      {/* header */}
+      <header className="post__head">
+        <img src="images/avatar.png" alt="avatar" className="avatar" />
+        <span className="name">StreetwearPulse</span>
+        <span className="material-icons more">more_horiz</span>
+      </header>
+
+      {/* image */}
+      {img && <img src={img} alt={id} className="post__img" />}
+
+      {/* actions */}
+      <div className="post__actions">
+        <span className="material-icons">favorite_border</span>
+        <span className="material-icons">chat_bubble_outline</span>
+        <span className="material-icons">send</span>
+        <span className="material-icons save">bookmark_border</span>
+      </div>
+
+      {/* meta + caption */}
+      <div className="likes">{likes}</div>
+
+      {/* caption block */}
+      <div className="caption">
+        <strong>StreetwearPulse</strong>{' '}
+        {open
+          ? <span dangerouslySetInnerHTML={{ __html: fullHTML }} />
+          : preview
+        }
+        {/* toggle link appears only if text was truncated */}
+        {fullHTML.length > preview.length && (
+          <button
+            className="toggle-btn"
+            onClick={e => { e.preventDefault(); setOpen(!open); }}
+          >
+            {open ? 'Hide text ▲' : ' Read more…'}
+          </button>
+        )}
+      </div>
+
+      <div className="time">{hours} HOURS AGO</div>
+    </article>
+  );
+}
+
+/* --- content (unchanged) --- */
+const posts = [
+  {
+    id: 'intro',
+    img: 'images/intro.png',
+    likes: '1,904 likes',
+    hours: 1,
+    raw: `This project explores the influence of social media on contemporary street fashion through a deep analysis of datasets, images, Instagram activity, and other digital platforms. Rather than taking a surface-level approach, I conducted extensive searches to identify meaningful patterns between online fashion engagement and real-world self-expression through style. The findings revealed notable correlations; social media significantly impacts street fashion, particularly in major fashion capitals where higher levels of digital engagement often coincide with more visible, diverse, and expressive street style. To illustrate these insights, the data was put into three visual graphs, each designed to highlight the connections between social media presence and fashion trends in urban environments. These visuals ultimately helped confirm the strong relationship between virtual influence and physical style.`
+  },
+  {
+    id: 'data',
+    img: 'images/data.png',
+    likes: '1,412 likes',
+    hours: 2,
+    raw: `### Dataset 15 global cities—from New York to Hong Kong—each evaluated on:
+Social Media Activity: An index (0–100) of how active the city’s youth are in fashion/streetwear social media (posts, searches, etc.).
+Streetwear Strength: An index (0–20) of how vibrant the local streetwear scene is (stores, community, events, prevalence of style).
+Distance to Nearest Fashion Capital: How far the city is from a major fashion hub (New York, London, or Paris). `
+  },
+  {
+    id: 'social-vs',
+    img: 'images/social_vs_strength.png',
+    likes: '2,233 likes',
+    hours: 3,
+    raw: `#### Scatter 1 — Hype vs. Real-Life Heat  
+**What the axes mean**  
+* X-axis → Social-Media Activity (0 to 100).  
+   Higher = more posts, searches, hashtags—louder digital buzz.  
+* Y-axis → Streetwear Strength (0 to 20).  
+   Higher = more stores, events, everyday sightings—stronger IRL culture.
+
+**What jumps out**  
+A clean diagonal band rises from lower-left to upper-right:  
+> the louder a city is online, the hotter it feels on the street.  
+
+* **NYC, London, Paris, Seoul** cluster in the top-right—top buzz, top strength.  
+* **Budapest** sits far right but way down low: hashtags are flying, yet the ground is quiet.  
+  That gap shows hype alone won’t pay rent or open storefronts.
+
+**Why it matters (easy math)**  
+Even with first-semester stats, the upward slope is impossible to miss.  
+For a brand or event planner, the takeaway is blunt:  
+> **Chase the chatter—your consumer tribe is already there.**`
+  },
+  {
+    id: 'dist-vs',
+    img: 'images/distance_vs_strength.png',
+    likes: '1,887 likes',
+    hours: 4,
+    raw: `#### Scatter 2 — How Far Is Too Far?  
+**Reading the chart**  
+* X-axis → Streetwear Strength (same 0-20 scale).  
+* Y-axis → Distance to nearest fashion capital (km).  
+   Zero = sitting in a hub like NYC/London/Paris.  
+   8 000 km = pretty much half the planet away.
+
+**Patterns & surprises**  
+* Cities on the bottom edge (0 km) mostly lean right → hometown advantage.  
+* **Seoul & Hong Kong** soar at the very top of the plot (8 000 km) **and** far right (strong).  
+  Distance is real, but Wi-Fi plus local passion can erase it.  
+* **Berea** proves the flip side: you can be close enough to borrow a sewing machine  
+  from Milan and *still* have a weak scene if the community isn’t there.
+
+**So what?**  
+Geography used to gatekeep fashion. In 2025, it’s more like a gentle speed bump—
+culture moves at the speed of your download bar.`
+  },
+  {
+    id: 'three-d',
+    img: 'images/plot_3d.png',
+    likes: '2,601 likes',
+    hours: 5,
+    raw: `#### 3-D Towers — Buzz · Distance · Strength  
+This plot turns every city into a little skyscraper:
+
+* X = Social-Media Activity  
+* Y = Distance (thousand km)  
+* Z = Streetwear Strength  
+
+**Two neighbourhoods grow the tallest towers**  
+
+| Zone | Recipe | Cities |
+|------|--------|--------|
+| *Front-Right* | High social + close distance | NYC · London · Paris |
+| *Far-Right Back* | High social + big distance | Seoul |
+
+Notice the barren plain at low social-media values—  
+> **no city with a quiet feed builds a tall tower.**
+
+**Translation**  
+You can win by being near the action **or** by making enough noise online,  
+but you can’t win by staying silent.`
+  },
+  {
+    id: 'insights',
+    likes: '2,987 likes',
+    hours: 6,
+    raw: `#### Final Thoughts — From Feeds to Foot-Traffic  
+
+**1. The internet isn’t a mirror; it’s a megaphone.**  
+Cities that shout the loudest online almost always feel the busiest on the street. No surprise—hashtags and reels are modern supply chains for culture.
+
+**2. Miles matter less than momentum.**  
+Seoul and Hong Kong don’t sit next door to Paris, but daily uploads + local pride let them play in the same league.
+
+**3. Hype needs hardware.**  
+Budapest shows that likes alone won’t stock shelves. You still need stores, events, and people brave enough to wear wild shoes on Monday morning.
+
+**4. Legacy hubs keep their edge—just barely.**  
+New York, London, and Paris start the race with a head-start ecosystem, yet digital-native cities are closing that gap faster than you can refresh a feed.`
+  },
+  {
+    id: 'next',
+    likes: '1,121 likes',
+    hours: 7,
+    raw: `### What I’d Tackle Next  
+
+* **Time series:** chart month-over-month to watch hype spikes during drops or collabs.  
+* **TikTok data:** shorter videos, wider reach—does that shift which cities pop?  
+* **Qual interviews:** talk to local shop owners in “quiet-but-loud” spots like Budapest to see what’s blocking IRL growth.
+
+Big picture?  
+> **Streetwear travels at Wi-Fi speed, but it still needs real pavement to land on.**
+
+Thanks for scrolling all the way here—now shut the laptop, lace up, and see what your own city’s streets are saying.`
+  }
+];
+
+function App() {
+  return <section className="feed">{posts.map(p => <Post key={p.id}{...p}/>)}</section>;
+}
+ReactDOM.createRoot(document.getElementById('feed')).render(<App/>);
+</script>
+</body>
+</html>
