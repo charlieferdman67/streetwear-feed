@@ -1,264 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>StreetwearPulse</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StreetwearPulse</title>
 
-<!-- Type & Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Billabong&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Billabong&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+
+  <!-- INLINE STYLES -->
+  <style>
+    :root{
+      --space-xs:8px;--space-s:16px;--space-m:24px;--space-l:40px;--space-xl:64px;
+      --bg:#fafafa;--card:#fff;--border:#e4e4e4;--text:#1d1d1d;--muted:#777;--accent:#111;--shadow:0 16px 40px rgba(0,0,0,.08)
+    }
+    @media(prefers-color-scheme:dark){
+      :root{--bg:#121212;--card:#1e1e1e;--border:#2d2d2d;--text:#f1f1f1;--muted:#aaa;--accent:#fff;--shadow:0 16px 40px rgba(0,0,0,.4)}
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+    img{max-width:100%;display:block}
+    a{text-decoration:none;color:inherit}
+
+    /* ─── HERO ────────────────────────────────────────────────────────── */
+    .hero{
+      height:100vh;
+      background:url('images/IMG_2672.JPG') center/cover no-repeat; /* updated */
+      position:relative
+    }
+    .hero__overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:var(--space-l)}
+    .hero__title{font-family:'Billabong',cursive;font-size:clamp(3rem,8vw,5rem);color:#fff}
+    .hero__subtitle{color:#fff;font-size:1.25rem;margin-top:var(--space-s)}
+    .scroll-indicator{color:#fff;animation:scrollBounce 2s infinite ease-in-out;margin-top:var(--space-xl)}
+    @keyframes scrollBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+
+    /* ─── BIO COMPONENTS ──────────────────────────────────────────────── */
+    .bio{background:var(--card);border:1px solid var(--border);border-radius:var(--space-s);box-shadow:var(--shadow);padding:var(--space-m);margin:var(--space-l) auto;max-width:600px}
+    .bio--intro{display:flex;align-items:flex-start}
+    .bio__avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-right:var(--space-m)}
+    .bio__content{display:flex;flex-direction:column}
+    .bio__name{font-family:'Billabong',cursive;font-size:32px;margin-bottom:var(--space-xs)}
+    .bio__username{font-size:14px;color:var(--muted);margin-bottom:var(--space-m);text-transform:lowercase}
+    .bio__text{font-size:16px;margin-bottom:var(--space-s)}
+    .bio--final ol,.bio--next ul{margin-left:var(--space-m)}
+    .bio--final li+li,.bio--next li+li{margin-top:var(--space-s)}
+
+    /* ─── TOP NAV ─────────────────────────────────────────────────────── */
+    .ig-top{position:sticky;top:0;background:rgba(255,255,255,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:var(--space-s) var(--space-m);z-index:10}
+    .logo-small{font-weight:600;font-size:18px}
+    .material-icons{font-size:24px;color:var(--accent)}
+
+    /* ─── FEED GRID ───────────────────────────────────────────────────── */
+    .feed{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--space-l);max-width:1000px;margin:0 auto;padding:var(--space-l) var(--space-m)}
+    .post{background:var(--card);border:1px solid var(--border);border-radius:var(--space-s);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+    .post-header{display:flex;align-items:center;padding:var(--space-s) var(--space-m)}
+    .post-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:var(--space-s)}
+    .title{font-weight:600;font-size:1.25rem}
+    .post-image{width:100%;cursor:zoom-in}
+    .post-actions{display:flex;align-items:center;padding:var(--space-s) var(--space-m)}
+    .post-actions .spacer{flex-grow:1}
+    .likes{font-weight:600;padding:0 var(--space-m)}
+    .post-caption{padding:var(--space-s) var(--space-m);position:relative}
+    .post-caption ul{margin-left:var(--space-m)}
+    .post-time{font-size:12px;color:var(--muted);padding:var(--space-s) var(--space-m)}
+    .post .caption{max-height:4.8em;overflow:hidden;transition:max-height .3s ease}
+    .post .caption.open{max-height:100vh}
+
+    /* ─── BOTTOM NAV ─────────────────────────────────────────────────── */
+    .ig-bottom{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding:var(--space-s) 0}
+
+    /* ─── VISUAL‑HIERARCHY TWEAKS ─────────────────────────────────────── */
+    h1{font-size:clamp(2.5rem,6vw,3.5rem)}
+    h2{font-size:1.75rem;margin-bottom:var(--space-s)}
+
+    /* ─── LIGHTBOX ────────────────────────────────────────────────────── */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.3s ease;z-index:100}
+    .lightbox.open{opacity:1;visibility:visible}
+    .lightbox img{max-width:90%;max-height:90%;border-radius:var(--space-xs);box-shadow:var(--shadow)}
+  </style>
 </head>
 <body>
 
-<!-- Hero -->
-<section class="hero" id="hero">
-  <div class="hero__inner">
-    <h1 class="logo-big">StreetwearPulse</h1>
-    <p class="tagline">From feeds to sidewalks · 15 cities · 3 simple metrics</p>
-    <a href="#feed" class="scroll-btn">▼ Scroll to explore</a>
-  </div>
-</section>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__overlay">
+      <h1 class="hero__title">StreetwearPulse</h1>
+      <p class="hero__subtitle">From feeds to sidewalks · 15 cities · 3 simple metrics</p>
+      <div class="scroll-indicator">▼ Scroll to explore</div>
+    </div>
+  </section>
 
-<!-- Frosted top-nav (reveals on scroll) -->
-<header class="ig-top" id="topBar">
-  <span class="logo-small">StreetwearPulse</span>
-  <span class="material-icons">send</span>
-</header>
+  <!-- INTRO BIO -->
+  <section class="bio bio--intro">
+    <img class="bio__avatar" src="images/avatar.png" alt="StreetwearPulse avatar"/>
+    <div class="bio__content">
+      <h1 class="bio__name">StreetwearPulse</h1>
+      <span class="bio__username">@streetwearpulse</span>
+      <p class="bio__text">This project explores the influence of social media on contemporary street fashion through a deep analysis of datasets, imagery, Instagram activity, and other digital platforms. Rather than taking a surface‑level approach, we conducted extensive searches to uncover meaningful patterns linking online fashion engagement with real‑world self‑expression.</p>
+      <p class="bio__text">The data reveals clear correlations: where digital engagement is high, street style is more visible, diverse, and expressive — especially in major fashion capitals. To visualise the relationship, we distilled our findings into three graphs connecting virtual buzz to on‑the‑ground trends.</p>
+    </div>
+  </section>
 
-<!-- Feed root -->
-<main id="feed"></main>
+  <!-- TOP NAV -->
+  <header class="ig-top" id="topBar">
+    <span class="logo-small">StreetwearPulse</span>
+    <span class="material-icons">favorite_border</span>
+  </header>
 
-<!-- Bottom nav -->
-<footer class="ig-bottom">
-  <span class="material-icons">home</span>
-  <span class="material-icons">search</span>
-  <span class="material-icons">add_box</span>
-  <span class="material-icons">favorite_border</span>
-  <span class="material-icons">account_circle</span>
-</footer>
+  <!-- FEED ROOT -->
+  <div id="root"></div>
 
-<!-- Libs -->
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- KEY TAKEAWAYS -->
+  <section class="bio bio--final">
+    <h2>From Feeds to Foot‑Traffic — Key Takeaways</h2>
+    <ol class="bio__text">
+      <li><strong>The internet’s not a mirror, it’s a megaphone.</strong> Cities loud online usually buzz in real life; hashtags and reels are today’s cultural supply chain.</li>
+      <li><strong>Distance matters way less now.</strong> Seoul and Hong Kong may be far from Paris, but constant posts and a strong local scene keep them in play.</li>
+      <li><strong>Hype alone isn’t enough.</strong> Budapest proves it — likes don’t open stores. Real‑world infrastructure and daily wear count most.</li>
+      <li><strong>The old hubs still lead (but not by much).</strong> New York, London, and Paris have built‑in advantages, yet digital‑first cities are closing fast.</li>
+    </ol>
+  </section>
 
-<!-- Main JSX -->
-<script type="text/babel">
-/* ---------------- helpers ---------------- */
-const topBar = document.getElementById('topBar');
-window.addEventListener('scroll', () =>
-  topBar.classList.toggle('show', window.scrollY > window.innerHeight * .65)
-);
+  <!-- CHANGES FOR NEXT TIME -->
+  <section class="bio bio--next">
+    <h2>Changes for Next Time — What I’d Tackle Next</h2>
+    <ul class="bio__text">
+      <li><strong>Time series:</strong> Track month‑to‑month hype spikes from drops or collabs.</li>
+      <li><strong>TikTok data:</strong> Shorter videos, bigger reach — does that change which cities stand out?</li>
+      <li><strong>Interviews:</strong> Chat with local shop owners in “quiet‑but‑loud” cities like Budapest to find out what’s blocking real‑world growth.</li>
+    </ul>
+    <p class="bio__text"><strong>The big picture:</strong> Streetwear spreads at Wi‑Fi speed, but it still needs real streets to make it real.<br/>Thanks for scrolling this far — now shut the laptop, lace up, and see what your own city’s saying.</p>
+  </section>
 
-/* fade-in */
-const io = new IntersectionObserver(
-  e => e.forEach(el => el.isIntersecting && el.target.classList.add('show')),
-  { threshold:.15 }
-);
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox"><img id="lightbox-img" alt="Expanded graphic"></div>
 
-/* ---------- Post with expandable caption ---------- */
-function Post({ id, img, raw, likes, hours }) {
-  /* fade-in observer (unchanged) */
-  React.useEffect(() => {
-    const el = document.getElementById(id);
-    if (el) io.observe(el);
-  }, []);
+  <!-- BOTTOM NAV -->
+  <footer class="ig-bottom">
+    <span class="material-icons">home</span>
+    <span class="material-icons">search</span>
+    <span class="material-icons">add_box</span>
+    <span class="material-icons">favorite_border</span>
+    <span class="material-icons">account_circle</span>
+  </footer>
 
-  /* toggle state */
-  const [open, setOpen] = React.useState(false);
+  <!-- React & Libraries -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-  /* markdown → HTML only once */
-  const fullHTML = React.useMemo(() => marked.parse(raw), [raw]);
+  <!-- APP SCRIPT -->
+  <script type="text/babel">
+;(function () {
+  const { createElement: h } = React;
+  const { render } = ReactDOM;
 
-  /* preview: strip MD syntax, slice first 160 chars */
-  const preview = React.useMemo(() => {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = fullHTML;                       // plain HTML now
-    const text = tmp.textContent || tmp.innerText || '';
-    return text.length > 160 ? text.slice(0, 160).trim() + '…' : text;
-  }, [fullHTML]);
+  /* ---------- Post Data ---------- */
+  const posts = [
+    {
+      id: 1,
+      title: 'Dataset',
+      image: 'images/dataset.png',
+      caption: `
+**15 major fashion cities ranked by:**
 
-  return (
-    <article id={id} className="post">
-      {/* header */}
-      <header className="post__head">
-        <img src="images/avatar.png" alt="avatar" className="avatar" />
-        <span className="name">StreetwearPulse</span>
-        <span className="material-icons more">more_horiz</span>
-      </header>
+- **Social Media Activity (0–100):** How active the city’s youth are with fashion and streetwear online.  
+- **Streetwear Strength (0–20):** How strong the local streetwear scene is—stores, events, and how common the style is.  
+- **Distance to Nearest Fashion Capital:** How far the city is from a top fashion hub (NY, London, or Paris).
+      `.trim(),
+      likes: '1,320 likes',
+      time: 'JUST NOW'
+    },
+    {
+      id: 2,
+      title: 'Visual 1 · Hype vs Real‑Life Heat',
+      image: 'images/social_vs_strength.png',
+      caption: `
+### What the axes mean  
+- **X‑axis (0–100):** Social Media Activity — more posts, searches, hashtags → more online buzz.  
+- **Y‑axis (0–20):** Streetwear Strength — more stores, events, and people actually wearing the style.
 
-      {/* image */}
-      {img && <img src={img} alt={id} className="post__img" />}
+### What stands out  
+- Clear upward trend: more online hype → stronger streetwear scene.  
+- **NYC, London, Paris, and Seoul** sit in the top‑right: big online buzz *and* strong street presence.  
+- **Budapest** is an outlier — heavy hashtag traffic but minimal street adoption.
 
-      {/* actions */}
-      <div className="post__actions">
-        <span className="material-icons">favorite_border</span>
-        <span className="material-icons">chat_bubble_outline</span>
-        <span className="material-icons">send</span>
-        <span className="material-icons save">bookmark_border</span>
-      </div>
+### Why it matters  
+Even with intro‑level stats the takeaway is obvious: if you’re a brand or planning an event, go where the online chatter already is.
+      `.trim(),
+      likes: '2,045 likes',
+      time: '1 HOUR AGO'
+    },
+    {
+      id: 3,
+      title: 'Visual 2 · How Far Is Too Far?',
+      image: 'images/distance_vs_strength.png',
+      caption: `
+### How to read it  
+- **X‑axis:** Streetwear Strength (0–20).  
+- **Y‑axis:** Distance from the nearest fashion capital (km). *0 km = you’re in NYC, London, or Paris. 8,000 km ≈ halfway around the world.*
 
-      {/* meta + caption */}
-      <div className="likes">{likes}</div>
+### What stands out  
+- At **0 km**, most cities have strong scenes — proximity still helps.  
+- **Seoul & Hong Kong** crush it at ~8,000 km; distance doesn’t block them when Wi‑Fi and community are strong.  
+- **Berea** shows proximity alone isn’t enough — local energy matters.
 
-      {/* caption block */}
-      <div className="caption">
-        <strong>StreetwearPulse</strong>{' '}
-        {open
-          ? <span dangerouslySetInnerHTML={{ __html: fullHTML }} />
-          : preview
-        }
-        {/* toggle link appears only if text was truncated */}
-        {fullHTML.length > preview.length && (
-          <button
-            className="toggle-btn"
-            onClick={e => { e.preventDefault(); setOpen(!open); }}
-          >
-            {open ? 'Hide text ▲' : ' Read more…'}
-          </button>
-        )}
-      </div>
+### Why it matters  
+Distance used to be a wall; now it’s barely a speed‑bump. Culture moves at fiber‑optic speeds.
+      `.trim(),
+      likes: '1,876 likes',
+      time: '2 HOURS AGO'
+    },
+    {
+      id: 4,
+      title: 'Visual 3 · Buzz · Distance · Strength',
+      image: 'images/plot_3d.png',
+      caption: `
+This 3‑D plot turns each city into its own skyscraper:
 
-      <div className="time">{hours} HOURS AGO</div>
-    </article>
-  );
-}
+- **X‑axis:** Social Media Activity  
+- **Y‑axis:** Distance from a fashion capital (thousands of km)  
+- **Z‑axis:** Streetwear Strength (tower height)
 
-/* --- content (unchanged) --- */
-const posts = [
-  {
-    id: 'intro',
-    img: 'images/intro.png',
-    likes: '1,904 likes',
-    hours: 1,
-    raw: `This project explores the influence of social media on contemporary street fashion through a deep analysis of datasets, images, Instagram activity, and other digital platforms. Rather than taking a surface-level approach, I conducted extensive searches to identify meaningful patterns between online fashion engagement and real-world self-expression through style. The findings revealed notable correlations; social media significantly impacts street fashion, particularly in major fashion capitals where higher levels of digital engagement often coincide with more visible, diverse, and expressive street style. To illustrate these insights, the data was put into three visual graphs, each designed to highlight the connections between social media presence and fashion trends in urban environments. These visuals ultimately helped confirm the strong relationship between virtual influence and physical style.`
-  },
-  {
-    id: 'data',
-    img: 'images/data.png',
-    likes: '1,412 likes',
-    hours: 2,
-    raw: `### Dataset 15 global cities—from New York to Hong Kong—each evaluated on:
-Social Media Activity: An index (0–100) of how active the city’s youth are in fashion/streetwear social media (posts, searches, etc.).
-Streetwear Strength: An index (0–20) of how vibrant the local streetwear scene is (stores, community, events, prevalence of style).
-Distance to Nearest Fashion Capital: How far the city is from a major fashion hub (New York, London, or Paris). `
-  },
-  {
-    id: 'social-vs',
-    img: 'images/social_vs_strength.png',
-    likes: '2,233 likes',
-    hours: 3,
-    raw: `#### Scatter 1 — Hype vs. Real-Life Heat  
-**What the axes mean**  
-* X-axis → Social-Media Activity (0 to 100).  
-   Higher = more posts, searches, hashtags—louder digital buzz.  
-* Y-axis → Streetwear Strength (0 to 20).  
-   Higher = more stores, events, everyday sightings—stronger IRL culture.
+### Where the tallest towers are  
+- **Front‑right:** High social media + close to a fashion capital → NYC, London, Paris.  
+- **Back‑right:** High social media + far from a fashion capital → Seoul.
 
-**What jumps out**  
-A clean diagonal band rises from lower-left to upper-right:  
-> the louder a city is online, the hotter it feels on the street.  
+### What stands out  
+Low‑buzz cities don’t build tall towers. No conversation, no culture.
+      `.trim(),
+      likes: '2,642 likes',
+      time: '3 HOURS AGO'
+    },
+    {
+      id: 5,
+      title: 'Final Thoughts',
+      image: 'images/soho.png',
+      caption: `
+### From Feeds to Foot‑Traffic  
 
-* **NYC, London, Paris, Seoul** cluster in the top-right—top buzz, top strength.  
-* **Budapest** sits far right but way down low: hashtags are flying, yet the ground is quiet.  
-  That gap shows hype alone won’t pay rent or open storefronts.
+1. **The internet’s not a mirror, it’s a megaphone.**  
+   Online volume predicts street energy. Hashtags and reels are today’s cultural supply chain.  
 
-**Why it matters (easy math)**  
-Even with first-semester stats, the upward slope is impossible to miss.  
-For a brand or event planner, the takeaway is blunt:  
-> **Chase the chatter—your consumer tribe is already there.**`
-  },
-  {
-    id: 'dist-vs',
-    img: 'images/distance_vs_strength.png',
-    likes: '1,887 likes',
-    hours: 4,
-    raw: `#### Scatter 2 — How Far Is Too Far?  
-**Reading the chart**  
-* X-axis → Streetwear Strength (same 0-20 scale).  
-* Y-axis → Distance to nearest fashion capital (km).  
-   Zero = sitting in a hub like NYC/London/Paris.  
-   8 000 km = pretty much half the planet away.
+2. **Distance matters way less now.**  
+   Seoul and Hong Kong thrive thousands of kilometers from Paris thanks to round‑the‑clock connectivity.  
 
-**Patterns & surprises**  
-* Cities on the bottom edge (0 km) mostly lean right → hometown advantage.  
-* **Seoul & Hong Kong** soar at the very top of the plot (8 000 km) **and** far right (strong).  
-  Distance is real, but Wi-Fi plus local passion can erase it.  
-* **Berea** proves the flip side: you can be close enough to borrow a sewing machine  
-  from Milan and *still* have a weak scene if the community isn’t there.
+3. **Hype alone isn’t enough.**  
+   Budapest proves it — likes don’t open stores. Real shops, events, and locals wearing bold looks still matter.  
 
-**So what?**  
-Geography used to gatekeep fashion. In 2025, it’s more like a gentle speed bump—
-culture moves at the speed of your download bar.`
-  },
-  {
-    id: 'three-d',
-    img: 'images/plot_3d.png',
-    likes: '2,601 likes',
-    hours: 5,
-    raw: `#### 3-D Towers — Buzz · Distance · Strength  
-This plot turns every city into a little skyscraper:
+4. **The old hubs still lead — but not by much.**  
+   New York, London, and Paris keep their edge, but digitally savvy cities are closing the gap fast.
+      `.trim(),
+      likes: '3,104 likes',
+      time: '4 HOURS AGO'
+    }
+  ];
 
-* X = Social-Media Activity  
-* Y = Distance (thousand km)  
-* Z = Streetwear Strength  
-
-**Two neighbourhoods grow the tallest towers**  
-
-| Zone | Recipe | Cities |
-|------|--------|--------|
-| *Front-Right* | High social + close distance | NYC · London · Paris |
-| *Far-Right Back* | High social + big distance | Seoul |
-
-Notice the barren plain at low social-media values—  
-> **no city with a quiet feed builds a tall tower.**
-
-**Translation**  
-You can win by being near the action **or** by making enough noise online,  
-but you can’t win by staying silent.`
-  },
-  {
-    id: 'insights',
-    likes: '2,987 likes',
-    hours: 6,
-    raw: `#### Final Thoughts — From Feeds to Foot-Traffic  
-
-**1. The internet isn’t a mirror; it’s a megaphone.**  
-Cities that shout the loudest online almost always feel the busiest on the street. No surprise—hashtags and reels are modern supply chains for culture.
-
-**2. Miles matter less than momentum.**  
-Seoul and Hong Kong don’t sit next door to Paris, but daily uploads + local pride let them play in the same league.
-
-**3. Hype needs hardware.**  
-Budapest shows that likes alone won’t stock shelves. You still need stores, events, and people brave enough to wear wild shoes on Monday morning.
-
-**4. Legacy hubs keep their edge—just barely.**  
-New York, London, and Paris start the race with a head-start ecosystem, yet digital-native cities are closing that gap faster than you can refresh a feed.`
-  },
-  {
-    id: 'next',
-    likes: '1,121 likes',
-    hours: 7,
-    raw: `### What I’d Tackle Next  
-
-* **Time series:** chart month-over-month to watch hype spikes during drops or collabs.  
-* **TikTok data:** shorter videos, wider reach—does that shift which cities pop?  
-* **Qual interviews:** talk to local shop owners in “quiet-but-loud” spots like Budapest to see what’s blocking IRL growth.
-
-Big picture?  
-> **Streetwear travels at Wi-Fi speed, but it still needs real pavement to land on.**
-
-Thanks for scrolling all the way here—now shut the laptop, lace up, and see what your own city’s streets are saying.`
+  /* ---------- Post Component ---------- */
+  function Post({ title, image, caption, likes, time }) {
+    const [open, setOpen] = React.useState(false);
+    return h('article', { className: 'post' }, [
+      h('header', { className: 'post-header' }, [
+        h('img', { className: 'post-avatar', src: 'images/avatar.png', alt: '' }),
+        h('span', { className: 'title' }, title),
+      ]),
+      image && h('img', { src: image, className: 'post-image', alt: title }),
+      h('div', { className: 'post-actions' }, [
+        h('span', { className: 'material-icons' }, 'favorite_border'),
+        h('span', { className: 'material-icons' }, 'chat_bubble_outline'),
+        h('span', { className: 'material-icons' }, 'send'),
+        h('div', { className: 'spacer' }),
+        h('span', { className: 'material-icons' }, 'bookmark_border')
+      ]),
+      h('div', { className: 'likes' }, likes),
+      h('div', { className: 'post-caption' }, [
+        h('strong', null, 'StreetwearData'),
+        ' ',
+        h('span', { dangerouslySetInnerHTML: { __html: marked.parse(caption) }})
+      ]),
+      h('div', { className: 'post-time' }, time)
+    ]);
   }
-];
 
-function App() {
-  return <section className="feed">{posts.map(p => <Post key={p.id}{...p}/>)}</section>;
-}
-ReactDOM.createRoot(document.getElementById('feed')).render(<App/>);
-</script>
+  function App() {
+    return h('div', { className: 'feed' },
+      posts.map(p => h(Post, { key: p.id, ...p }))
+    );
+  }
+
+  render(h(App), document.getElementById('root'));
+
+  /* ---------- Lightbox ---------- */
+  function enableLightbox() {
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    document.querySelectorAll('.post-image').forEach(img => {
+      img.addEventListener('click', () => {
+        lbImg.src = img.src;
+        lb.classList.add('open');
+      });
+    });
+    lb.addEventListener('click', () => lb.classList.remove('open'));
+  }
+  window.addEventListener('load', enableLightbox);
+})();
+  </script>
 </body>
 </html>
+
